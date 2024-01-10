@@ -1,0 +1,73 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    
+  }
+    
+  th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  
+  .edit-btn, .delete-btn {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  
+  .save-btn {
+    padding: 5px 10px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  
+  .cancel-btn {
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  
+  th {
+    background-color: #4caf50;
+    color: #fff;
+  }
+  
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  
+  button{
+    padding: 5px 10px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+table.soma-horas{
+  background-color: #4caf50;
+  color: #fff;
+}
+ 
+  
+  
