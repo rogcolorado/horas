@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Horas Trabalhadas</title>  
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>Horas Trabalhadas</h1>
+ 
+  <form id="timeForm">
+    <label for="name">Nome:</label>
+    <input type="text" id="name" required>
+   
+    <label for="date">Data:</label>
+    <input type="date" id="date" required>
+   
+    <label for="entryTime">Entrada:</label>
+    <input type="time" id="entryTime" required>
+   
+    <label for="exitTime">Saída:</label>
+    <input type="time" id="exitTime" required>
+   
+    <button type="button" onclick="registrarHoras()">Registrar Horas</button>
+  </form>
+ 
+  <table id="timeTable">
+    <tr>
+      <th>Nome</th>
+      <th>Data</th>
+      <th>Entrada</th>
+      <th>Saída</th>      
+      <th>Horas trabalhadas</th>      
+      <th>Ações</th>
+    </tr>
+      
+  <tbody>
+    <!-- Linhas da tabela serão adicionadas dinamicamente -->
+  </tbody>
+</table>
+
+<!-- Tabela com a soma das horas por funcionário -->
+
+<table id="soma-horas">
+  <tbody>
+    <!-- Linhas da tabela serão adicionadas dinamicamente -->
+  </tbody>
+</table>
+
+<button onclick="somarHorasPorFuncionario()">Calcular por Funcionário</button>
+
+<button onclick="imprimirTabela()">Imprimir</button>  
+
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+
+<button onclick="exportarParaExcel()">Exportar para Excel</button>
+ 
+<script src="script.js"></script>
+</body>
+</html>
