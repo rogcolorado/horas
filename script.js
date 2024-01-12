@@ -87,83 +87,101 @@ function adicionarRegistroTabela(name, date, entryTime, exitTime, hoursWorked) {
 
 function editarRegistro(button) {
   var row = button.parentNode.parentNode;
- 
+
   var nameCell = row.cells[0];
   var dateCell = row.cells[1];
   var entryTimeCell = row.cells[2];
   var exitTimeCell = row.cells[3];
   var hoursWorkedCell = row.cells[4];
   var actionsCell = row.cells[5];
- 
+
   var name = nameCell.innerHTML;
   var date = dateCell.innerHTML;
   var entryTime = entryTimeCell.innerHTML;
   var exitTime = exitTimeCell.innerHTML;
   var hoursWorked = hoursWorkedCell.innerHTML;
- 
+
   nameCell.innerHTML = '<input type="text" value="' + name + '">';
-  dateCell.innerHTML = '<input type="date" value="' + date + '">';
+  dateCell.innerHTML = '<input type="date" value="' + formatDateToISO(date) + '">';
   entryTimeCell.innerHTML = '<input type="time" value="' + entryTime + '">';
   exitTimeCell.innerHTML = '<input type="time" value="' + exitTime + '">';
   hoursWorkedCell.innerHTML = '<input type="text" value="' + hoursWorked + '" >';
-  actionsCell.innerHTML = '<button class="save-btn" onclick="salvarEdicao(this)">Salvar</button> <button class="cancel-btn" onclick="cancelarEdicao(this)">Cancelar</button>';
+  actionsCell.innerHTML = '<button class="save-btn" onclick="salvarEdicao(this)">Salvar</button> <button class="cancel-btn" onclick="cancelarEdicao(this)">Cancelar</button> <button class="delete-btn" onclick="excluirRegistro(this)">Excluir</button>';
 }
-
 
 function salvarEdicao(button) {
   var row = button.parentNode.parentNode;
- 
+
   var nameCell = row.cells[0];
   var dateCell = row.cells[1];
   var entryTimeCell = row.cells[2];
   var exitTimeCell = row.cells[3];
   var hoursWorkedCell = row.cells[4];
   var actionsCell = row.cells[5];
- 
-  var name = nameCell.firstChild.value;
-  var date = dateCell.firstChild.value;
-  var entryTime = entryTimeCell.firstChild.value;
-  var exitTime = exitTimeCell.firstChild.value;
-  var hoursWorked = calcularHorasTrabalhadas(entryTime, exitTime);
- 
+
+  var name = nameCell.querySelector("input").value;
+  var date = formatISOToDate(dateCell.querySelector("input").value);
+  var entryTime = entryTimeCell.querySelector("input").value;
+  var exitTime = exitTimeCell.querySelector("input").value;
+  var hoursWorked = calculateHoursWorked(entryTime, exitTime);
+
   nameCell.innerHTML = name;
   dateCell.innerHTML = date;
   entryTimeCell.innerHTML = entryTime;
   exitTimeCell.innerHTML = exitTime;
   hoursWorkedCell.innerHTML = hoursWorked;
-  actionsCell.innerHTML = '<button class="edit-btn" onclick="editarRegistro(this)">Edit</button> <button class="delete-btn" onclick="excluirRegistro(this)">Delete</button>';
+  actionsCell.innerHTML = '<button class="edit-btn" onclick="editarRegistro(this)">Editar</button> <button class="delete-btn" onclick="excluirRegistro(this)">Excluir</button>';
 }
-
 
 function cancelarEdicao(button) {
   var row = button.parentNode.parentNode;
- 
+
   var nameCell = row.cells[0];
   var dateCell = row.cells[1];
   var entryTimeCell = row.cells[2];
   var exitTimeCell = row.cells[3];
   var hoursWorkedCell = row.cells[4];
   var actionsCell = row.cells[5];
- 
-  var name = nameCell.firstChild.value;
-  var date = dateCell.firstChild.value;
-  var entryTime = entryTimeCell.firstChild.value;
-  var exitTime = exitTimeCell.firstChild.value;
-  var hoursWorked = hoursWorkedCell.firstChild.value;
- 
-  nameCell.textContent = name;
-  dateCell.textContent = date;
-  entryTimeCell.textContent = entryTime;
-  exitTimeCell.textContent = exitTime;
-  hoursWorkedCell.textContent = hoursWorked;
-  actionsCell.textContent = '<button class="edit-btn" onclick="editarRegistro(this)">Editar</button> <button class="delete-btn" onclick="excluirRegistro(this)">Excluir</button>';
-}
 
+  var name = nameCell.querySelector("input").value;
+  var date = formatISOToDate(dateCell.querySelector("input").value);
+  var entryTime = entryTimeCell.querySelector("input").value;
+  var exitTime = exitTimeCell.querySelector("input").value;
+  var hoursWorked = calculateHoursWorked(entryTime, exitTime);
+
+  nameCell.innerHTML = name;
+  dateCell.innerHTML = date;
+  entryTimeCell.innerHTML = entryTime;
+  exitTimeCell.innerHTML = exitTime;
+  hoursWorkedCell.innerHTML = hoursWorked;
+  actionsCell.innerHTML = '<button class="edit-btn" onclick="editarRegistro(this)">Editar</button> <button class="delete-btn" onclick="excluirRegistro(this)">Excluir</button>';
+}
 
 function excluirRegistro(button) {
   var row = button.parentNode.parentNode;
   row.parentNode.removeChild(row);
 }
+
+function calculateHoursWorked(entryTime, exitTime) {
+  var entry = new Date("2000-01-01 " + entryTime);
+  var exit = new Date("2000-01-01 " + exitTime);
+  var diff = exit - entry;
+  var hours = Math.floor(diff / 1000 / 60 / 60);
+  var minutes = Math.floor((diff / 1000 / 60) % 60);
+  return hours + "h " + minutes + "m";
+}
+
+function formatDateToISO(date) {
+  var parts = date.split("/");
+  return parts[2] + "-" + parts[1] + "-" + parts[0];
+}
+
+function formatISOToDate(date) {
+  var parts = date.split("-");
+  return parts[2] + "/" + parts[1] + "/" + parts[0];
+}
+
+
 
 function imprimirTabela() {
   var tabelaCompleta = document.getElementById("timeTable").outerHTML;
@@ -171,8 +189,9 @@ function imprimirTabela() {
   var janelaImprimir = window.open('', '', 'width=800,height=600');
   janelaImprimir.document.write('<html><head><title>Tabela de Horas Trabalhadas</title></head><body>');
   janelaImprimir.document.write(tabelaCompleta);
+  janelaImprimir.document.write('<p><b>Funcionários</b>')
   janelaImprimir.document.write(tabelaSomaHoras);
-  janelaImprimir.document.write('</body></html>');
+  janelaImprimir.document.write('</p></body></html>');
   janelaImprimir.document.close();
   janelaImprimir.print();
 }
@@ -236,32 +255,6 @@ function imprimirTabela() {
     var tabela = document.getElementById("timeTable");
     var somaHorasTable = document.getElementById("soma-horas");
   
-    // Crie elementos temporários para as tabelas
-    var tabelaTemp = document.createElement("table");
-    var somaHorasTemp = document.createElement("table");
-  
-    // Clone as tabelas originais para os elementos temporários
-    tabelaTemp.innerHTML = tabela.outerHTML;
-    somaHorasTemp.innerHTML = somaHorasTable.outerHTML;
-  
-    // Crie a planilha combinando as tabelas
-    var workbook = XLSX.utils.table_to_book(tabelaTemp);
-    var somaHorasSheet = XLSX.utils.table_to_book(somaHorasTemp);
-  
-    // Combine as planilhas
-    XLSX.utils.book_append_sheet(workbook, somaHorasSheet.Sheets[somaHorasSheet.SheetNames[0]], 'SomaHoras');
-  
-    // Nome do arquivo de saída
-    var nomeArquivo = "horas_trabalhadas.xlsx";
-  
-    // Exporte a planilha para um arquivo Excel
-    XLSX.writeFile(workbook, nomeArquivo);
-  }*/
-
-  function exportarParaExcel() {
-    var tabela = document.getElementById("timeTable");
-    var somaHorasTable = document.getElementById("soma-horas");
-  
     // Crie uma tabela temporária e adicione cópias de ambas as tabelas com uma linha vazia de separação
     var tabelaTemp = document.createElement("table");
     tabelaTemp.innerHTML = tabela.outerHTML + '<tr></tr>' + somaHorasTable.outerHTML;
@@ -269,12 +262,89 @@ function imprimirTabela() {
     // Crie a planilha combinando ambas as partes
     var workbook = XLSX.utils.table_to_book(tabelaTemp);
   
-    // Nome do arquivo de saída
-    var nomeArquivo = "horas_trabalhadas.xlsx";
+    // Obtenha a data atual correta
+    var dataAtual = new Date();
+    dataAtual.setDate(dataAtual.getDate() + 1); // Adicione 1 dia à data atual
+    var dia = ("0" + dataAtual.getDate()).slice(-2);
+    var mes = ("0" + (dataAtual.getMonth() + 1)).slice(-2);
+    var ano = dataAtual.getFullYear();
+  
+    // Ajuste: Verifique se o dia é 01 e, se for, ajuste o mês e o ano
+    if (dia === "01") {
+      mes = ("0" + (dataAtual.getMonth() + 2)).slice(-2);
+      ano = dataAtual.getFullYear() + 1;
+    }
+  
+    // Ajuste: Crie uma nova data apenas com a data correta
+    var dataExportacao = new Date(ano, mes - 1, dia);
+  
+    // Ajuste: Adicione a data correta ao nome do arquivo
+    var nomeArquivo = "horas_trabalhadas_" + dataExportacao.toLocaleDateString() + ".xlsx";
   
     // Exporte a planilha para um arquivo Excel
     XLSX.writeFile(workbook, nomeArquivo);
+  }*/
+
+  function exportarParaCSV() {
+    var tabela = document.getElementById("timeTable");
+    var somaHorasTable = document.getElementById("soma-horas");
+  
+    // Crie uma tabela temporária e adicione cópias de ambas as tabelas com uma linha vazia de separação
+    var tabelaTemp = document.createElement("table");
+    tabelaTemp.innerHTML = tabela.outerHTML + '<tr></tr>' + somaHorasTable.outerHTML;
+  
+    // Obtenha a data atual correta
+    var dataAtual = new Date();
+    dataAtual.setDate(dataAtual.getDate() + 1); // Adicione 1 dia à data atual
+    var dia = ("0" + dataAtual.getDate()).slice(-2);
+    var mes = ("0" + (dataAtual.getMonth() + 1)).slice(-2);
+    var ano = dataAtual.getFullYear();
+  
+    // Ajuste: Verifique se o dia é 01 e, se for, ajuste o mês e o ano
+    if (dia === "01") {
+      mes = ("0" + (dataAtual.getMonth() + 2)).slice(-2);
+      ano = dataAtual.getFullYear() + 1;
+    }
+  
+    // Ajuste: Crie uma nova data apenas com a data correta
+    var dataExportacao = new Date(ano, mes - 1, dia);
+  
+    // Ajuste: Adicione a data correta ao nome do arquivo
+    var nomeArquivo = "horas_trabalhadas_" + dataExportacao.toLocaleDateString() + ".csv";
+  
+    // Obtenha o conteúdo da tabela como texto CSV
+    var csvContent = "data:text/csv;charset=utf-8,";
+  
+    var linhas = tabelaTemp.querySelectorAll("tr");
+    linhas.forEach(function (linha) {
+      var colunas = linha.querySelectorAll("th, td");
+      var linhaCSV = Array.from(colunas)
+        .map(function (coluna) {
+          return coluna.innerText;
+        })
+        .join(",");
+      csvContent += linhaCSV + "\r\n";
+    });
+  
+    // Crie um link de download e atribua o conteúdo CSV e o nome do arquivo
+    var linkDownload = document.createElement("a");
+    linkDownload.href = encodeURI(csvContent);
+    linkDownload.download = nomeArquivo;
+  
+    // Simule um clique no link de download para iniciar o download do arquivo CSV
+    linkDownload.click();
   }
+  
+  
+  
+  
+  
+  
+ 
+  
+  
+  
+  
   
   
   
